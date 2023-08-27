@@ -9,9 +9,9 @@ const createUser =asyncHandler(async(req,res)=>{
         throw new Error('Please add a text') 
      }
      const checkUser = await(User.findOne({ email: req.body.email }))
-     console.log(checkUser)
      if(checkUser){
-      res.status(400).json('User already exists')
+      res.status(400)
+        throw new Error('User already exists')
      }
      const hashedPassword = await bcrypt.hash(req.body.password, 10);
      if(req.body.dateOfBirth){
@@ -79,5 +79,20 @@ const getAge = asyncHandler(async(req, res)=>{
       })
 })
 
+const setBirth = asyncHandler (async(req,res)=>{
+    oldUser = User.findById(req.user.id)
+    console.log(1)
+    if(oldUser.dateOfBirth){
+      res.status(400)
+      throw new Error('already have birth date')
+    }
+   console.log(2)
+  newUser= await User.findByIdAndUpdate(oldUser.findById,{
+   dateOfBirth:req.body,
+})
+console.log(3)
+  res.status(200).json(newUser);
+})
 
-module.exports={createUser, login, getAge}
+
+module.exports={createUser, login, getAge, setBirth}
